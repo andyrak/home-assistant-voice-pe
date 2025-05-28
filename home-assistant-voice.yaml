@@ -1613,7 +1613,7 @@ select:
   - platform: template
     name: "Wake word sensitivity"
     optimistic: true
-    initial_option: Moderately sensitive
+    initial_option: Slightly sensitive
     restore_value: true
     entity_category: config
     options:
