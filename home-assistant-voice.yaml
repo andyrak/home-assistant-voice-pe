@@ -74,9 +74,6 @@ wifi:
 network:
   enable_ipv6: true
 
-network:
-  enable_ipv6: true
-
 logger:
   level: DEBUG
   logs:
