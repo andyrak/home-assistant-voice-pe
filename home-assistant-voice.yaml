@@ -1,4 +1,6 @@
 substitutions:
+  name: home-assistant-voice-092747
+  friendly_name: Home Assistant Voice 092747
   # Phases of the Voice Assistant
   # The voice assistant is ready to be triggered by a wake word
   voice_assist_idle_phase_id: '1'
@@ -16,10 +18,9 @@ substitutions:
   voice_assist_error_phase_id: '11'
 
 esphome:
-  name: home-assistant-voice
-  friendly_name: Home Assistant Voice
-  name_add_mac_suffix: true
-  min_version: 2025.5.1
+  name: ${name}
+  name_add_mac_suffix: false
+  friendly_name: ${friendly_name}
   min_version: 2025.5.1
   on_boot:
     priority: 375
@@ -1506,50 +1507,50 @@ media_player:
               duration: 1.0s
     files:
       - id: center_button_press_sound
-        file: https://github.com/RobMeades/home-assistant-voice-pe/raw/dev/sounds/center_button_press.flac
+        file: https://github.com/andyrak/home-assistant-voice-pe/raw/dev/sounds/center_button_press.flac
       - id: center_button_double_press_sound
-        file: https://github.com/RobMeades/home-assistant-voice-pe/raw/dev/sounds/center_button_double_press.flac
+        file: https://github.com/andyrak/home-assistant-voice-pe/raw/dev/sounds/center_button_double_press.flac
       - id: center_button_triple_press_sound
-        file: https://github.com/RobMeades/home-assistant-voice-pe/raw/dev/sounds/center_button_triple_press.flac
+        file: https://github.com/andyrak/home-assistant-voice-pe/raw/dev/sounds/center_button_triple_press.flac
       - id: center_button_long_press_sound
-        file: https://github.com/RobMeades/home-assistant-voice-pe/raw/dev/sounds/center_button_long_press.flac
+        file: https://github.com/andyrak/home-assistant-voice-pe/raw/dev/sounds/center_button_long_press.flac
       - id: factory_reset_initiated_sound
-        file: https://github.com/RobMeades/home-assistant-voice-pe/raw/dev/sounds/factory_reset_initiated.mp3
+        file: https://github.com/andyrak/home-assistant-voice-pe/raw/dev/sounds/factory_reset_initiated.mp3
       - id: factory_reset_cancelled_sound
-        file: https://github.com/RobMeades/home-assistant-voice-pe/raw/dev/sounds/factory_reset_cancelled.mp3
+        file: https://github.com/andyrak/home-assistant-voice-pe/raw/dev/sounds/factory_reset_cancelled.mp3
       - id: factory_reset_confirmed_sound
-        file: https://github.com/RobMeades/home-assistant-voice-pe/raw/dev/sounds/factory_reset_confirmed.mp3
+        file: https://github.com/andyrak/home-assistant-voice-pe/raw/dev/sounds/factory_reset_confirmed.mp3
       - id: jack_connected_sound
-        file: https://github.com/RobMeades/home-assistant-voice-pe/raw/dev/sounds/jack_connected.flac
+        file: https://github.com/andyrak/home-assistant-voice-pe/raw/dev/sounds/jack_connected.flac
       - id: jack_disconnected_sound
-        file: https://github.com/RobMeades/home-assistant-voice-pe/raw/dev/sounds/jack_disconnected.flac
+        file: https://github.com/andyrak/home-assistant-voice-pe/raw/dev/sounds/jack_disconnected.flac
       - id: mute_switch_on_sound
-        file: https://github.com/RobMeades/home-assistant-voice-pe/raw/dev/sounds/mute_switch_on.flac
+        file: https://github.com/andyrak/home-assistant-voice-pe/raw/dev/sounds/mute_switch_on.flac
       - id: mute_switch_off_sound
-        file: https://github.com/RobMeades/home-assistant-voice-pe/raw/dev/sounds/mute_switch_off.flac
+        file: https://github.com/andyrak/home-assistant-voice-pe/raw/dev/sounds/mute_switch_off.flac
       - id: timer_finished_sound
-        file: https://github.com/RobMeades/home-assistant-voice-pe/raw/dev/sounds/timer_finished.flac
+        file: https://github.com/andyrak/home-assistant-voice-pe/raw/dev/sounds/timer_finished.flac
       - id: wake_word_triggered_sound
-        file: https://github.com/RobMeades/home-assistant-voice-pe/raw/dev/sounds/wake_word_triggered.flac
+        file: https://github.com/andyrak/home-assistant-voice-pe/raw/dev/sounds/wake_word_triggered.flac
       - id: easter_egg_tick_sound
-        file: https://github.com/RobMeades/home-assistant-voice-pe/raw/dev/sounds/easter_egg_tick.mp3
+        file: https://github.com/andyrak/home-assistant-voice-pe/raw/dev/sounds/easter_egg_tick.mp3
       - id: easter_egg_tada_sound
-        file: https://github.com/esphome/home-assistant-voice-pe/raw/dev/sounds/easter_egg_tada.mp3
+        file: https://github.com/andyrak/home-assistant-voice-pe/raw/dev/sounds/easter_egg_tada.mp3
       - id: error_cloud_expired
-        file: https://github.com/esphome/home-assistant-voice-pe/raw/dev/sounds/error_cloud_expired.mp3
+        file: https://github.com/andyrak/home-assistant-voice-pe/raw/dev/sounds/error_cloud_expired.mp3
 
 voice_kit:
   i2c_id: internal_i2c
   reset_pin: GPIO4
   firmware:
-    url: https://github.com/esphome/voice-kit-xmos-firmware/releases/download/v1.3.1/ffva_v1.3.1_upgrade.bin
+    url: https://github.com/andyrak/voice-kit-xmos-firmware/releases/download/v1.3.1/ffva_v1.3.1_upgrade.bin
     version: "1.3.1"
     md5: 964635c5bf125529dab14a2472a15401
 
 external_components:
   - source:
       type: git
-      url: https://github.com/RobMeades/home-assistant-voice-pe
+      url: https://github.com/andyrak/home-assistant-voice-pe
       ref: dev
     components:
       - voice_kit
@@ -1620,36 +1621,36 @@ micro_wake_word:
                             - voice_assistant.start:
                                 wake_word: !lambda return wake_word;
 
-select:
-  - platform: template
-    name: "Wake word sensitivity"
-    optimistic: true
-    initial_option: Slightly sensitive
-    restore_value: true
-    entity_category: config
-    options:
-      - Slightly sensitive
-      - Moderately sensitive
-      - Very sensitive
-    on_value:
-      # Sets specific wake word probabilities computed for each particular model
-      # Note probability cutoffs are set as a quantized uint8 value, each comment has the corresponding floating point cutoff
-      # False Accepts per Hour values are tested against all units and channels from the Dinner Party Corpus.
-      # These cutoffs apply only to the specific models included in the firmware: okay_nabu@20241226.3, hey_jarvis@v2, hey_mycroft@v2
-      lambda: |-
-        if (x == "Slightly sensitive") {
-          id(okay_nabu).set_probability_cutoff(217);    // 0.85 -> 0.000 FAPH on DipCo (Manifest's default)
-          id(hey_jarvis).set_probability_cutoff(247);   // 0.97 -> 0.563 FAPH on DipCo (Manifest's default)
-          id(hey_mycroft).set_probability_cutoff(253);  // 0.99 -> 0.567 FAPH on DipCo
-        } else if (x == "Moderately sensitive") {
-          id(okay_nabu).set_probability_cutoff(176);    // 0.69 -> 0.376 FAPH on DipCo
-          id(hey_jarvis).set_probability_cutoff(235);   // 0.92 -> 0.939 FAPH on DipCo
-          id(hey_mycroft).set_probability_cutoff(242);  // 0.95 -> 1.502 FAPH on DipCo (Manifest's default)
-        } else if (x == "Very sensitive") {
-          id(okay_nabu).set_probability_cutoff(143);    // 0.56 -> 0.751 FAPH on DipCo
-          id(hey_jarvis).set_probability_cutoff(212);   // 0.83 -> 1.502 FAPH on DipCo
-          id(hey_mycroft).set_probability_cutoff(237);  // 0.93 -> 1.878 FAPH on DipCo
-        }
+# select:
+#   - platform: template
+#     name: "Wake word sensitivity"
+#     optimistic: true
+#     initial_option: Slightly sensitive
+#     restore_value: true
+#     entity_category: config
+#     options:
+#       - Slightly sensitive
+#       - Moderately sensitive
+#       - Very sensitive
+#     on_value:
+#       # Sets specific wake word probabilities computed for each particular model
+#       # Note probability cutoffs are set as a quantized uint8 value, each comment has the corresponding floating point cutoff
+#       # False Accepts per Hour values are tested against all units and channels from the Dinner Party Corpus.
+#       # These cutoffs apply only to the specific models included in the firmware: okay_nabu@20241226.3, hey_jarvis@v2, hey_mycroft@v2
+#       lambda: |-
+#         if (x == "Slightly sensitive") {
+#           id(okay_nabu).set_probability_cutoff(217);    // 0.85 -> 0.000 FAPH on DipCo (Manifest's default)
+#           id(hey_jarvis).set_probability_cutoff(247);   // 0.97 -> 0.563 FAPH on DipCo (Manifest's default)
+#           id(hey_mycroft).set_probability_cutoff(253);  // 0.99 -> 0.567 FAPH on DipCo
+#         } else if (x == "Moderately sensitive") {
+#           id(okay_nabu).set_probability_cutoff(176);    // 0.69 -> 0.376 FAPH on DipCo
+#           id(hey_jarvis).set_probability_cutoff(235);   // 0.92 -> 0.939 FAPH on DipCo
+#           id(hey_mycroft).set_probability_cutoff(242);  // 0.95 -> 1.502 FAPH on DipCo (Manifest's default)
+#         } else if (x == "Very sensitive") {
+#           id(okay_nabu).set_probability_cutoff(143);    // 0.56 -> 0.751 FAPH on DipCo
+#           id(hey_jarvis).set_probability_cutoff(212);   // 0.83 -> 1.502 FAPH on DipCo
+#           id(hey_mycroft).set_probability_cutoff(237);  // 0.93 -> 1.878 FAPH on DipCo
+#         }
 
 voice_assistant:
   id: va
