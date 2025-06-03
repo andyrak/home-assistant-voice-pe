@@ -14,13 +14,12 @@ substitutions:
   voice_assist_not_ready_phase_id: '10'
   # The voice assistant encountered an error
   voice_assist_error_phase_id: '11'
-  # Change this to true in case you ahve a hidden SSID at home.
-  hidden_ssid: "false"
 
 esphome:
   name: home-assistant-voice
   friendly_name: Home Assistant Voice
   name_add_mac_suffix: true
+  min_version: 2025.5.1
   min_version: 2025.5.1
   on_boot:
     priority: 375
@@ -41,6 +40,7 @@ esphome:
 esp32:
   board: esp32-s3-devkitc-1
   cpu_frequency: 240MHz
+  cpu_frequency: 240MHz
   variant: esp32s3
   flash_size: 16MB
   framework:
@@ -57,6 +57,12 @@ esp32:
       CONFIG_SPIRAM_RODATA: "y"
       CONFIG_SPIRAM_FETCH_INSTRUCTIONS: "y"
 
+      # Moves instructions and read only data from flash into PSRAM on boot.
+      # Both enabled allows instructions to execute while a flash operation is in progress without needing to be placed in IRAM.
+      # Considerably speeds up mWW at the cost of using more PSRAM.
+      CONFIG_SPIRAM_RODATA: "y"
+      CONFIG_SPIRAM_FETCH_INSTRUCTIONS: "y"
+
       CONFIG_BT_ALLOCATION_FROM_SPIRAM_FIRST: "y"
       CONFIG_BT_BLE_DYNAMIC_ENV_MEMORY: "y"
 
@@ -65,12 +71,14 @@ esp32:
 
 wifi:
   id: wifi_id
-  fast_connect: ${hidden_ssid}
   on_connect:
     - lambda: id(improv_ble_in_progress) = false;
     - script.execute: control_leds
   on_disconnect:
     - script.execute: control_leds
+
+network:
+  enable_ipv6: true
 
 network:
   enable_ipv6: true
@@ -1376,6 +1384,18 @@ script:
                 then:
                   - micro_wake_word.disable_model: stop
 
+  # Script to handle the end of the streaming wake word voice assistant.
+  # Should we restart it? Shall we keep it stopped?
+  - id: handle_voice_assistant_end
+    then:
+      - if:
+          condition:
+              switch.is_off: master_mute_switch
+          then:
+            - voice_assistant.start_continuous:
+          else:
+            - voice_assistant.stop:
+            
 i2s_audio:
   - id: i2s_output
     # i2s_output data pin is gpio10
@@ -1486,33 +1506,33 @@ media_player:
               duration: 1.0s
     files:
       - id: center_button_press_sound
-        file: https://github.com/esphome/home-assistant-voice-pe/raw/dev/sounds/center_button_press.flac
+        file: https://github.com/RobMeades/home-assistant-voice-pe/raw/dev/sounds/center_button_press.flac
       - id: center_button_double_press_sound
-        file: https://github.com/esphome/home-assistant-voice-pe/raw/dev/sounds/center_button_double_press.flac
+        file: https://github.com/RobMeades/home-assistant-voice-pe/raw/dev/sounds/center_button_double_press.flac
       - id: center_button_triple_press_sound
-        file: https://github.com/esphome/home-assistant-voice-pe/raw/dev/sounds/center_button_triple_press.flac
+        file: https://github.com/RobMeades/home-assistant-voice-pe/raw/dev/sounds/center_button_triple_press.flac
       - id: center_button_long_press_sound
-        file: https://github.com/esphome/home-assistant-voice-pe/raw/dev/sounds/center_button_long_press.flac
+        file: https://github.com/RobMeades/home-assistant-voice-pe/raw/dev/sounds/center_button_long_press.flac
       - id: factory_reset_initiated_sound
-        file: https://github.com/esphome/home-assistant-voice-pe/raw/dev/sounds/factory_reset_initiated.mp3
+        file: https://github.com/RobMeades/home-assistant-voice-pe/raw/dev/sounds/factory_reset_initiated.mp3
       - id: factory_reset_cancelled_sound
-        file: https://github.com/esphome/home-assistant-voice-pe/raw/dev/sounds/factory_reset_cancelled.mp3
+        file: https://github.com/RobMeades/home-assistant-voice-pe/raw/dev/sounds/factory_reset_cancelled.mp3
       - id: factory_reset_confirmed_sound
-        file: https://github.com/esphome/home-assistant-voice-pe/raw/dev/sounds/factory_reset_confirmed.mp3
+        file: https://github.com/RobMeades/home-assistant-voice-pe/raw/dev/sounds/factory_reset_confirmed.mp3
       - id: jack_connected_sound
-        file: https://github.com/esphome/home-assistant-voice-pe/raw/dev/sounds/jack_connected.flac
+        file: https://github.com/RobMeades/home-assistant-voice-pe/raw/dev/sounds/jack_connected.flac
       - id: jack_disconnected_sound
-        file: https://github.com/esphome/home-assistant-voice-pe/raw/dev/sounds/jack_disconnected.flac
+        file: https://github.com/RobMeades/home-assistant-voice-pe/raw/dev/sounds/jack_disconnected.flac
       - id: mute_switch_on_sound
-        file: https://github.com/esphome/home-assistant-voice-pe/raw/dev/sounds/mute_switch_on.flac
+        file: https://github.com/RobMeades/home-assistant-voice-pe/raw/dev/sounds/mute_switch_on.flac
       - id: mute_switch_off_sound
-        file: https://github.com/esphome/home-assistant-voice-pe/raw/dev/sounds/mute_switch_off.flac
+        file: https://github.com/RobMeades/home-assistant-voice-pe/raw/dev/sounds/mute_switch_off.flac
       - id: timer_finished_sound
-        file: https://github.com/esphome/home-assistant-voice-pe/raw/dev/sounds/timer_finished.flac
+        file: https://github.com/RobMeades/home-assistant-voice-pe/raw/dev/sounds/timer_finished.flac
       - id: wake_word_triggered_sound
-        file: https://github.com/esphome/home-assistant-voice-pe/raw/dev/sounds/wake_word_triggered.flac
+        file: https://github.com/RobMeades/home-assistant-voice-pe/raw/dev/sounds/wake_word_triggered.flac
       - id: easter_egg_tick_sound
-        file: https://github.com/esphome/home-assistant-voice-pe/raw/dev/sounds/easter_egg_tick.mp3
+        file: https://github.com/RobMeades/home-assistant-voice-pe/raw/dev/sounds/easter_egg_tick.mp3
       - id: easter_egg_tada_sound
         file: https://github.com/esphome/home-assistant-voice-pe/raw/dev/sounds/easter_egg_tada.mp3
       - id: error_cloud_expired
@@ -1529,10 +1549,11 @@ voice_kit:
 external_components:
   - source:
       type: git
-      url: https://github.com/esphome/home-assistant-voice-pe
+      url: https://github.com/RobMeades/home-assistant-voice-pe
       ref: dev
     components:
       - voice_kit
+      - audio
     refresh: 0s
 
 audio_dac:
@@ -1548,12 +1569,12 @@ micro_wake_word:
     gain_factor: 4
   stop_after_detection: false
   models:
-    - model: https://github.com/kahrendt/microWakeWord/releases/download/okay_nabu_20241226.3/okay_nabu.json
-      id: okay_nabu
-    - model: hey_jarvis
-      id: hey_jarvis
-    - model: hey_mycroft
-      id: hey_mycroft
+    # - model: okay_nabu
+    #   id: okay_nabu
+    # - model: hey_jarvis
+    #   id: hey_jarvis
+    # - model: hey_mycroft
+    #   id: hey_mycroft
     - model: https://github.com/kahrendt/microWakeWord/releases/download/stop/stop.json
       id: stop
       internal: true
@@ -1636,14 +1657,16 @@ voice_assistant:
     microphone: i2s_mics
     channels: 0
   media_player: external_media_player
-  micro_wake_word: mww
-  use_wake_word: false
+  # micro_wake_word: mww
+  # use_wake_word: false
+  use_wake_word: true
   noise_suppression_level: 0
   auto_gain: 0 dbfs
   volume_multiplier: 1
   on_client_connected:
     - lambda: id(init_in_progress) = false;
     - micro_wake_word.start:
+    - voice_assistant.start_continuous:
     - lambda: id(voice_assistant_phase) = ${voice_assist_idle_phase_id};
     - script.execute: control_leds
   on_client_disconnected:
@@ -1661,6 +1684,9 @@ voice_assistant:
             - lambda: return code != "stt-no-text-recognized";
         then:
           - lambda: id(voice_assistant_phase) = ${voice_assist_error_phase_id};
+          - script.execute: control_leds
+          - delay: 1s
+          - lambda: id(voice_assistant_phase) = ${voice_assist_idle_phase_id};
           - script.execute: control_leds
     # If the error code is cloud-auth-failed, serve a local audio file guiding the user.
     - if:
@@ -1691,6 +1717,15 @@ voice_assistant:
     - script.execute: control_leds
     # Start a script that would potentially enable the stop word if the response is longer than a second
     - script.execute: activate_stop_word_once
+    - wait_until:
+        lambda: |-
+          return id(external_media_player)->state == media_player::MediaPlayerState::MEDIA_PLAYER_STATE_ANNOUNCING;
+    - wait_until:
+        not:
+          lambda: |-
+            return id(external_media_player)->state == media_player::MediaPlayerState::MEDIA_PLAYER_STATE_ANNOUNCING;
+    - lambda: id(voice_assistant_phase) = ${voice_assist_idle_phase_id};
+    - script.execute: control_leds
   # When the voice assistant ends ...
   on_end:
     - wait_until:
@@ -1710,6 +1745,7 @@ voice_assistant:
     # Reset the voice assistant phase id and reset the LED animations.
     - lambda: id(voice_assistant_phase) = ${voice_assist_idle_phase_id};
     - script.execute: control_leds
+    - script.execute: handle_voice_assistant_end
   on_timer_finished:
     - switch.turn_on: timer_ringing
   on_timer_started:
